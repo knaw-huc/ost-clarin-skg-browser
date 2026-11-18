@@ -22,7 +22,7 @@ const EntityList = (config: EntityConfig) => {
     const search = useSearch({ from: '/$entity' });
     const navigate = useNavigate({ from: '/$entity' });
     const page = search.page ?? 1;
-    const pageSize = search.size ?? DEFAULT_PAGE_SIZE;
+    const pageSize = search.pageSize ?? DEFAULT_PAGE_SIZE;
     const { data: result, isFetching } = useQuery({
         queryKey: ['entity-list', config.path, page, pageSize],
         queryFn: () => fetchList(`${config.path}`, {
@@ -31,7 +31,6 @@ const EntityList = (config: EntityConfig) => {
             filters: []
         })
     });
-
 
     const data = result?.items
     const totalItems = result?.totalItems;
