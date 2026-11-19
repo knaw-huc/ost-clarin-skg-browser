@@ -64,9 +64,6 @@ SKG-IF JSON-LD responses with results in `@graph`:
   full page is returned.
 - **Single item:** `GET {API_BASE}/{entity}/{id}` — the first `@graph` entry is used.
 
-Error responses surface `detail` / `message` and any `unsupported_filters` from the
-response body.
-
 Multilingual fields (titles, abstracts, labels) are shown in English, falling back
 to `none`, then to the first available language.
 
