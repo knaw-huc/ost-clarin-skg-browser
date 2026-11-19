@@ -35,7 +35,7 @@ export const Field = ({ label, children }: { label: string, children: ReactNode 
 export const EntityLink = (
     { path, id, className, children }:  { path: string; id: string; className?: string; children: ReactNode }
 ) => {
-    return (<Link key={id} to='$entity/$id' params={{ entity: path, id }} className={className}>{children}</Link>);
+    return (<Link key={id} to='/$entity/$id' params={{ entity: path, id }} className={className}>{children}</Link>);
 }
 
 

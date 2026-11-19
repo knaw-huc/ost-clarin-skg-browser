@@ -4,6 +4,11 @@ import {Link, useNavigate, useParams, useSearch} from "@tanstack/react-router";
 import {type EntityConfig, getEntityConfig} from "../entities.ts";
 import {Alert, NotFound} from "./shared.tsx";
 
+interface SearchParams {
+    page: number;
+    pageSize: number;
+}
+
 const DEFAULT_PAGE_SIZE = 20;
 
 export const EntityListPage = () => {
@@ -16,7 +21,7 @@ export const EntityListPage = () => {
 }
 
 const EntityList = (config: EntityConfig) => {
-    const search = useSearch({ from: '/$entity' });
+    const search: SearchParams = useSearch({ from: '/$entity' });
     const navigate = useNavigate({ from: '/$entity' });
     const page = search.page ?? 1;
     const pageSize = search.pageSize ?? DEFAULT_PAGE_SIZE;

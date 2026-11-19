@@ -8,7 +8,13 @@ import {
     type Entity,
     type Identifier,
     type Manifestation,
-    type Product
+    type Product, type Person,
+    type Organisation,
+    type Topic,
+    type Grant,
+    type Venue,
+    type Service,
+    type Datasource
 } from "../api.ts";
 import {EntityLink, Field, LanguageValues, NotFound} from "./shared.tsx";
 
@@ -75,6 +81,20 @@ const EntityFields = ({ item }: { item: Entity }) => {
     switch (item.entity_type) {
         case 'product':
             return ProductFields(item);
+        case 'person':
+            return PersonFields(item);
+        case 'organisation':
+            return OrganizationFields(item);
+        case 'topic':
+            return TopicFields(item);
+        case 'grant':
+            return GrantFields(item);
+        case 'venue':
+            return VenueFields(item);
+        case 'srv_service':
+            return ServiceFields(item);
+        case 'datasource':
+            return DatasourceFields(item);
         default:
             return null;
     }
@@ -117,9 +137,8 @@ const ProductFields = (item: Entity) => {
             {product.topics?.length ? (
                 <Field label='topics'>
                     <div className='chips'>
-                        {product.topics.map(({term}) => (
-                            <EntityLink key={term.local_identifier} path='topics' id={term.local_identifier}
-                                        className='chip'>
+                        {product.topics.map(({ term }) => (
+                            <EntityLink key={term.local_identifier} path="topics" id={term.local_identifier} className="chip">
                                 {pickLanguage(term.labels) ?? term.local_identifier}
                             </EntityLink>
                         ))}
@@ -158,4 +177,138 @@ const Manifestations = ({ manifestations }: { manifestations?: Manifestation[] }
             )
         })}
     </Field>);
+}
+
+const PersonFields = (item: Entity) => {
+    const person = item as Person;
+
+    return (
+        <>
+            {person.given_name && <Field label='given name'>{person.given_name}</Field>}
+            {person.family_name && <Field label='family name'>{person.family_name}</Field>}
+        </>
+    );
+}
+
+const OrganizationFields = (item: Entity) => {
+    const organization = item as Organisation;
+
+    return (
+        <>
+            {organization.other_names?.length ?
+                <Field label='other_names'>{organization.other_names.join(' · ')}</Field> : null}
+            {organization.website && <Field label='website'>
+                <a href={organization.website} target={'_blank'} rel={'noreferrer'}>
+                    {organization.website}
+                </a>
+            </Field>}
+        </>
+    );
+}
+
+const TopicFields = (item: Entity) => {
+    const topic = item as Topic;
+    return topic.labels ? <Field label={'topics'}><LanguageValues map={topic.labels} /></Field> : null;
+}
+
+const GrantFields = (item: Entity) => {
+    const grant = item as Grant;
+
+    return (
+        <>
+            {grant.titles && Object.values(grant.titles).flat().length > 1 &&
+                <Field label="titles">
+                    <LanguageValues map={grant.titles} />
+                </Field>}
+            {grant.abstracts && <Field label="abstract">
+                <LanguageValues map={grant.abstracts} markdown />
+            </Field>}
+            {grant.acronym && <Field label="acronym">{grant.acronym}</Field>}
+            {grant.grant_number && <Field label="grant number">{grant.grant_number}</Field>}
+            {grant.funding_stream && <Field label="funding stream">{grant.funding_stream}</Field>}
+            {grant.funded_amount !== undefined && (
+                <Field label="funded amount">{grant.funded_amount.toLocaleString()}{grant.currency && ` ${grant.currency}`}</Field>
+            )}
+            {grant.duration && <Field label="duration">{grant.duration.start ?? '?'} – {grant.duration.end ?? '?'}</Field>}
+            {grant.website && <Field label="Website"><a href={grant.website} target="_blank" rel="noreferrer">{grant.website}</a></Field>}
+        </>
+    );
+}
+
+const VenueFields = (item: Entity) => {
+    const venue = item as Venue;
+
+    return (
+        <>
+            {venue.type && <Field label="venue type">
+                <span className="badge">{venue.type}</span>
+            </Field>}
+            {venue.acronym && <Field label="acronym">{venue.acronym}</Field>}
+            {venue.series && <Field label="series">{venue.series}</Field>}
+            {venue.creation_date && <Field label="created">{venue.creation_date}</Field>}
+        </>
+    );
+}
+
+const ServiceFields = (item: Entity) => {
+    const service = item as Service;
+    return (
+        <>
+            {service.srv_descriptions && <Field label="Description">
+                <LanguageValues map={service.srv_descriptions} />
+            </Field>}
+            <Organisations label="hosting organisation" orgs={service.srv_has_hosting_organisation} />
+            <Organisations label="research infrastructure" orgs={service.srv_has_research_infrastructure} />
+            <Organisations label="relevant organisations" orgs={service.relevant_organisations} />
+            {service.srv_venues?.length ? (
+                <Field label="venues">
+                    <ul className="plain">
+                        {service.srv_venues.map((v) => (
+                            <li key={v.local_identifier}>
+                                {v.website ? <a href={v.website} target="_blank" rel="noreferrer">{v.name ?? v.website}</a> : (v.name ?? v.local_identifier)}
+                                {v.types?.map((t) => <span key={t} className="badge">{t.replace(/^srv_/, '')}</span>)}
+                            </li>
+                        ))}
+                    </ul>
+                </Field>
+            ) : null}
+        </>
+    );
+}
+
+const Organisations = ({ label, orgs }: { label: string; orgs?: Organisation[] }) => {
+    if (!orgs?.length) {
+        return null;
+    }
+
+    return (
+        <Field label={label}>
+            <ul className="plain">
+                {orgs.map((o) => (
+                    <li key={o.local_identifier}>
+                        <EntityLink path="organisations" id={o.local_identifier}>
+                            {o.name ?? o.local_identifier}
+                        </EntityLink>
+                    </li>
+                ))}
+            </ul>
+        </Field>
+    );
+}
+
+const DatasourceFields = (item: Entity) => {
+    const dataSource = item as Datasource;
+    return (
+        <>
+            {dataSource.data_source_classification && <Field label="Classification">
+                <span className="badge">{dataSource.data_source_classification}</span>
+            </Field>}
+            {dataSource.research_product_types?.length ? (
+                <Field label="Hosted product types">
+                    {dataSource.research_product_types.map((t) =>
+                        <span key={t} className="badge">{t}</span>)}
+                </Field>
+            ) : null}
+        </>
+    );
 }

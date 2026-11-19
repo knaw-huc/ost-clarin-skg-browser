@@ -1,9 +1,9 @@
-import {createRoute, createRouter, redirect, type AnyRoute} from "@tanstack/react-router";
+import {createRoute, createRouter, redirect, createRootRoute} from "@tanstack/react-router";
 import Layout from "./components/Layout.tsx";
 import {EntityListPage} from "./components/EntityList.tsx";
 import {EntityDetailsPage} from "./components/EntityDetails.tsx";
 
-const rootRoute: AnyRoute = createRoute({ component: Layout });
+const rootRoute = createRootRoute({ component: Layout });
 
 const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -16,6 +16,10 @@ const indexRoute = createRoute({
 const entityListRoute = createRoute({
     getParentRoute: () => rootRoute,
     path : '$entity',
+    validateSearch: (search: Record<string, unknown>): { page?: number; pageSize?: number } => ({
+        page: Number(search.page) || undefined,
+        pageSize: Number(search.pageSize) || undefined,
+    }),
     component: EntityListPage
 });
 
@@ -29,3 +33,9 @@ export const router = createRouter({
     routeTree: rootRoute.addChildren([ indexRoute, entityListRoute, detailsRoute ]),
     defaultPreload: 'intent'
 });
+
+declare module '@tanstack/react-router' {
+    interface Register {
+        router: typeof router
+    }
+}

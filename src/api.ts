@@ -49,7 +49,7 @@ export interface Product extends Entity {
     product_type: string;
     titles?: LanguageMap<string>;
     abstracts?: LanguageMap<string>;
-    topics?: { term: Topic[]; }[]
+    topics?: { term: Topic; }[]
     manifestations?: Manifestation[];
 }
 
@@ -57,6 +57,52 @@ export interface Person extends Entity {
     name?: string
     given_name?: string
     family_name?: string
+}
+
+export interface Organisation extends Entity {
+    name?: string
+    other_names?: string[]
+    website?: string
+    types?: string[]
+}
+
+export interface Grant extends Entity {
+    titles?: LanguageMap<string[]>
+    abstracts?: LanguageMap<string[]>
+    acronym?: string
+    grant_number?: string
+    funding_stream?: string
+    funding_agency?: Organisation
+    funded_amount?: number
+    currency?: string
+    duration?: { start?: string; end?: string }
+    website?: string
+    beneficiaries?: Organisation[]
+}
+
+export interface Venue extends Entity {
+    name?: string
+    website?: string
+    types?: string[]
+    type?: string
+    acronym?: string
+    series?: string
+    creation_date?: string
+}
+
+export interface Service extends Entity {
+    name?: string
+    srv_descriptions?: LanguageMap<string[]>
+    srv_has_hosting_organisation?: Organisation[]
+    srv_has_research_infrastructure?: Organisation[]
+    relevant_organisations?: Organisation[]
+    srv_venues?: Venue[]
+}
+
+export interface Datasource extends Entity {
+    name?: string
+    data_source_classification?: string
+    research_product_types?: string[]
 }
 
 // App types
