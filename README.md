@@ -83,7 +83,7 @@ src/
 └── components/
     ├── Layout.tsx         # Header and page shell
     ├── EntityList.tsx     # Paginated list view
-    └── EntityDetails.tsx  # Details view (placeholder)
+    └── EntityDetails.tsx  # Details view
 ```
 
 ## Adding an entity type
