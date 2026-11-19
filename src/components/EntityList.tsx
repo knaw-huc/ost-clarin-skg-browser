@@ -2,18 +2,15 @@ import {useQuery} from "@tanstack/react-query";
 import {fetchList} from "../api.ts";
 import {Link, useNavigate, useParams, useSearch} from "@tanstack/react-router";
 import {type EntityConfig, getEntityConfig} from "../entities.ts";
+import {Alert, NotFound} from "./shared.tsx";
 
 const DEFAULT_PAGE_SIZE = 20;
-
-const NotFound = () => {
-    return (<div>Entity not found!</div>);
-}
 
 export const EntityListPage = () => {
     const { entity } = useParams({ from: '/$entity' });
     const config = getEntityConfig(entity);
     if (!config) {
-        return <NotFound />;
+        return <NotFound what={'Entity not found or supported'}/>;
     }
     return EntityList(config);
 }
@@ -23,7 +20,7 @@ const EntityList = (config: EntityConfig) => {
     const navigate = useNavigate({ from: '/$entity' });
     const page = search.page ?? 1;
     const pageSize = search.pageSize ?? DEFAULT_PAGE_SIZE;
-    const { data: result, isFetching } = useQuery({
+    const { data: result, isFetching, isPending, error } = useQuery({
         queryKey: ['entity-list', config.path, page, pageSize],
         queryFn: () => fetchList(`${config.path}`, {
             pageSize,
@@ -39,6 +36,18 @@ const EntityList = (config: EntityConfig) => {
 
 
     return (<section>
+        <div className="list-status">
+            {isFetching && !isPending && <span className="spinner" aria-label="Updating" />}
+            {isPending ? <><span className="spinner" aria-hidden="true" />Loading…</> : data && (
+                data.length
+                    ? `Showing ${(page - 1) * pageSize + 1}–${(page - 1) * pageSize + data.length}` +
+                    (totalItems !== undefined ? ` of ${totalItems.toLocaleString()}` : '')
+                    : 'No results'
+            )}
+        </div>
+
+        {error && <Alert error={error} />}
+
         {data && data.length > 0 && (
             <ul className={`results${isFetching ? ' stale' : ''}`}>
                 {data.map((item) => {

@@ -71,7 +71,7 @@ export interface ListParams {
     filters: [string, string][];
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
     readonly status: number;
 
     constructor(status: number, message: string) {

@@ -1,7 +1,7 @@
 import {createRoute, createRouter, redirect, type AnyRoute} from "@tanstack/react-router";
 import Layout from "./components/Layout.tsx";
 import {EntityListPage} from "./components/EntityList.tsx";
-import EntityDetails from "./components/EntityDetails.tsx";
+import {EntityDetailsPage} from "./components/EntityDetails.tsx";
 
 const rootRoute: AnyRoute = createRoute({ component: Layout });
 
@@ -22,7 +22,7 @@ const entityListRoute = createRoute({
 const detailsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '$entity/$id',
-    component: EntityDetails
+    component: EntityDetailsPage
 });
 
 export const router = createRouter({
