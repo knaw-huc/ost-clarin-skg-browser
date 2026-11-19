@@ -58,7 +58,7 @@ served from the same origin as the app (no dev proxy is configured in
 Requests are sent with `Accept: application/ld+json, application/json` and expect
 SKG-IF JSON-LD responses with results in `@graph`:
 
-- **List:** `GET {API_BASE}/{entity}?page=1&page_size=20[&filter=key:value,...]`
+- **List:** `GET {API_BASE}/{entity}?page=1&page_size=20`
   — the total count is read from `meta.part_of.total_items`, which enables
   "page X of Y" and the *Last* button. Without it, a next page is assumed while a
   full page is returned.
