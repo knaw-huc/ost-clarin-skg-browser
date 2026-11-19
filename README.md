@@ -3,8 +3,8 @@
 A small web front end for browsing a Scholarly Knowledge Graph exposed through an
 [SKG-IF](https://skg-if.github.io/) compatible API, built for OSTrails / CLARIN.
 
-> **Status:** early work in progress. Only the paginated **Products** list works;
-> the entity details page is still a placeholder.
+> **Status:** early work in progress. Only the paginated **Products** list and the product details page work; 
+> rest of the entities to follow.
 
 ## Tech stack
 
